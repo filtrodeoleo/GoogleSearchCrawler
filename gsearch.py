@@ -145,6 +145,7 @@ class GoogleAPI:
                     title = re.sub(r'<.+?>', '', title)
                     result = SearchResult()
                     result.setURL(url)
+                    print '### URL: ' + url
                     result.setTitle(title)
                     span = link.find('div')
                     if (type(span) != types.NoneType):
@@ -176,21 +177,31 @@ class GoogleAPI:
             retry = 3
             while(retry > 0):
                 try:
+                    print 'Link de acesso: ' + url
+
                     request = urllib2.Request(url)
+
                     length = len(user_agents)
+
                     index = random.randint(0, length-1)
+
                     user_agent = user_agents[index]
+
                     request.add_header('User-agent', user_agent)
                     request.add_header('connection', 'keep-alive')
                     request.add_header('Accept-Encoding', 'gzip')
                     request.add_header('referer', base_url)
+
                     response = urllib2.urlopen(request)
+
                     html = response.read()
+
                     if(response.headers.get('content-encoding', None) == 'gzip'):
                         html = gzip.GzipFile(
                             fileobj=StringIO.StringIO(html)).read()
 
                     results = self.extractSearchResults(html)
+
                     search_results.extend(results)
                     break
                 except urllib2.URLError, e:
